@@ -13,6 +13,7 @@ const (
 	queryInsertUser = "INSERT INTO users(first_name,last_name,email,date_created) VALUES (?, ?, ?, ?);"
 	queryGetUser    = "SELECT id,first_name,last_name,email,date_created FROM users WHERE id=?;"
 	queryUpdateUser = "UPDATE users SET first_name=?, last_name=?, email=? WHERE id=?"
+	queryDeleteUser = "DELETE FROM users where id=?"
 )
 
 var (
@@ -69,5 +70,18 @@ func (user *User) Update() *errors.RestErr {
 		return mysql_utils.ParseError(err)
 	}
 
+	return nil
+}
+
+func (user *User) Delete() *errors.RestErr {
+	stmt, err := users_db.Client.Prepare(queryDeleteUser)
+	if err != nil {
+		return mysql_utils.ParseError(err)
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(user.Id)
+	if err != nil {
+		return mysql_utils.ParseError(err)
+	}
 	return nil
 }

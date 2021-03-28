@@ -6,18 +6,14 @@ import (
 )
 
 func CreateUser(user users.User) (*users.User, *errors.RestErr) {
-	if err := user.Save(); err != nil {
-		return nil, err
-	}
-	return &user, nil
+	err := user.Save()
+	return &user, err
 }
 
 func GetUser(userId int64) (*users.User, *errors.RestErr) {
 	result := users.User{Id: userId}
-	if err := result.Get(); err != nil {
-		return nil, err
-	}
-	return &result, nil
+	err := result.Get()
+	return &result, err
 }
 
 func UpdateUser(isPartial bool, user users.User) (*users.User, *errors.RestErr) {
@@ -37,9 +33,7 @@ func UpdateUser(isPartial bool, user users.User) (*users.User, *errors.RestErr) 
 		if user.Email != "" {
 			current.Email = user.Email
 		}
-
 	} else {
-
 		current.FirstName = user.FirstName
 		current.LastName = user.LastName
 		current.Email = user.Email
@@ -50,4 +44,9 @@ func UpdateUser(isPartial bool, user users.User) (*users.User, *errors.RestErr) 
 	}
 
 	return current, nil
+}
+
+func DeleteUser(user_id int64) *errors.RestErr {
+	user := users.User{Id: user_id}
+	return user.Delete()
 }
